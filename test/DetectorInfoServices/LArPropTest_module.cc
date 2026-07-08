@@ -54,7 +54,7 @@ namespace util {
 
     std::cout << "Density = " << detprop.Density() << " g/cm^3" << std::endl;
     std::cout << "Drift velocity = " << detprop.DriftVelocity() << " cm/usec" << std::endl;
-    std::cout << "Efield = " << detprop.Efield() << " kV/cm" << std::endl;
+    std::cout << "Efield = " << detprop.PerPlaneEfield() << " kV/cm" << std::endl;
     std::cout << "Temperature = " << detprop.Temperature() << " Kelvin" << std::endl;
     std::cout << "Electron lifetime = " << detprop.ElectronLifetime() << " usec" << std::endl;
     std::cout << "Radiation Length = " << larprop->RadiationLength() << " g/cm^2" << std::endl;
@@ -65,9 +65,9 @@ namespace util {
 
     assert(detprop.Density() == detprop.Density(detprop.Temperature()));
     assert(detprop.Density() != detprop.Density(detprop.Temperature() + 0.1));
-    assert(detprop.DriftVelocity() == detprop.DriftVelocity(detprop.Efield()));
+    assert(detprop.DriftVelocity() == detprop.DriftVelocity(detprop.PerPlaneEfield()));
     assert(detprop.DriftVelocity() ==
-           detprop.DriftVelocity(detprop.Efield(), detprop.Temperature()));
+           detprop.DriftVelocity(detprop.PerPlaneEfield(), detprop.Temperature()));
 
     // Drift velocity vs. electric field.
 

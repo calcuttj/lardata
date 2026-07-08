@@ -38,7 +38,7 @@ namespace util {
 
     fWirePitch = fWireReadoutGeom.Plane({0, 0, 0}).WirePitch();
     fTimeTick = sampling_rate(fClocks) / 1000.;
-    fDriftVelocity = fDetProp.DriftVelocity(fDetProp.Efield(), fDetProp.Temperature());
+    fDriftVelocity = fDetProp.DriftVelocity(fDetProp.PerPlaneEfield(), fDetProp.Temperature());
 
     fWiretoCm = fWirePitch;
     fTimetoCm = fTimeTick * fDriftVelocity;
