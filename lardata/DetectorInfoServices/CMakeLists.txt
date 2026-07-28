@@ -26,7 +26,9 @@ endfunction()
 
 make_simple_service_builder(DetectorClocks lardataalg::DetectorInfo)
 make_simple_service_builder(DetectorProperties lardataalg::DetectorInfo)
+make_simple_service_builder(ElectricField lardataalg::DetectorInfo)
 make_simple_service_builder(LArProperties lardataalg::DetectorInfo)
+make_simple_service_builder(PositionDistorter lardataalg::DetectorInfo)
 
 cet_collect_plugin_builders(${builder_dest} lar::DetectorInfoServiceBuilders
   LIST ${builders}
@@ -52,6 +54,8 @@ cet_build_plugin(DetectorPropertiesServiceStandard lar::DetectorPropertiesServic
   fhiclcpp::fhiclcpp
   PRIVATE
   lardata::LArPropertiesService
+  lardata::ElectricFieldService
+  lardata::PositionDistorterService
   lardata::ServicePack
   art_root_io::RootDB
   messagefacility::MF_MessageLogger
@@ -62,6 +66,24 @@ cet_build_plugin(DetectorPropertiesServiceStandard lar::DetectorPropertiesServic
 cet_build_plugin(LArPropertiesServiceStandard lar::LArPropertiesService
   LIBRARIES PRIVATE
   art::Framework_Principal
+)
+
+cet_build_plugin(BoxElectricFieldService lar::ElectricFieldService
+  LIBRARIES PRIVATE
+  lardataalg::DetectorInfo
+  fhiclcpp::fhiclcpp
+)
+
+cet_build_plugin(DriftVolElectricFieldService lar::ElectricFieldService
+  LIBRARIES PRIVATE
+  lardataalg::DetectorInfo
+  fhiclcpp::fhiclcpp
+)
+
+cet_build_plugin(NullPositionDistorterService lar::PositionDistorterService
+  LIBRARIES PRIVATE
+  lardataalg::DetectorInfo
+  fhiclcpp::fhiclcpp
 )
 
 install_headers()

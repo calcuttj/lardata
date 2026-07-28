@@ -10,15 +10,39 @@
 #include "larcore/Geometry/Geometry.h"
 #include "larcore/Geometry/WireReadout.h"
 #include "lardata/DetectorInfoServices/DetectorClocksService.h"
+#include "lardata/DetectorInfoServices/ElectricFieldService.h"
 #include "lardata/DetectorInfoServices/LArPropertiesService.h"
+#include "lardata/DetectorInfoServices/PositionDistorterService.h"
 #include "lardata/DetectorInfoServices/ServicePack.h" // lar::extractProviders()
 #include "messagefacility/MessageLogger/MessageLogger.h"
 
 // Art includes
+#include "art/Framework/Services/Registry/ServiceHandle.h" // art::ServiceRegistry::isAvailable
 #include "art_root_io/RootDB/SQLite3Wrapper.h"
 
 #include "TFile.h"
 #include "TTree.h"
+
+namespace {
+
+  // The ElectricFieldService / PositionDistorterService are optional: return
+  // the provider when the service is configured, else nullptr (the provider
+  // then uses its built-in fallbacks: uniform PerPlaneEfield / identity).
+  detinfo::IElectricFieldProvider const* optionalElectricField()
+  {
+    if (art::ServiceRegistry::isAvailable<detinfo::ElectricFieldService>())
+      return lar::providerFrom<detinfo::ElectricFieldService>();
+    return nullptr;
+  }
+
+  detinfo::IPositionDistorter const* optionalPositionDistorter()
+  {
+    if (art::ServiceRegistry::isAvailable<detinfo::PositionDistorterService>())
+      return lar::providerFrom<detinfo::PositionDistorterService>();
+    return nullptr;
+  }
+
+}
 
 namespace detinfo {
 
@@ -30,7 +54,9 @@ namespace detinfo {
             lar::providerFrom<geo::Geometry>(),
             &art::ServiceHandle<geo::WireReadout>()->Get(),
             lar::providerFrom<detinfo::LArPropertiesService>(),
-            std::set<std::string>({"InheritNumberTimeSamples"})}
+            std::set<std::string>({"InheritNumberTimeSamples"}),
+            optionalElectricField(),
+            optionalPositionDistorter()}
     , fPS{pset}
     , fInheritNumberTimeSamples{pset.get<bool>("InheritNumberTimeSamples", false)}
   {
