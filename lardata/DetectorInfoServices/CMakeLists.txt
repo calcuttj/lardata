@@ -80,9 +80,18 @@ cet_build_plugin(DriftVolElectricFieldService lar::ElectricFieldService
   fhiclcpp::fhiclcpp
 )
 
-cet_build_plugin(NullPositionDistorterService lar::PositionDistorterService
+# IDistortion chain link (art tool) + the chain-of-responsibility service.
+cet_build_plugin(NullDistortion art::tool
   LIBRARIES PRIVATE
   lardataalg::DetectorInfo
+  fhiclcpp::fhiclcpp
+)
+
+cet_build_plugin(ChainedDistorterService lar::PositionDistorterService
+  LIBRARIES PRIVATE
+  lardataalg::DetectorInfo
+  art::Utilities
+  canvas::canvas
   fhiclcpp::fhiclcpp
 )
 
