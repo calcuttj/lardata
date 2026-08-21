@@ -38,22 +38,27 @@ namespace detinfo {
            pset.get<std::vector<fhicl::ParameterSet>>("Links", {})) {
         fLinks.push_back(art::make_tool<detinfo::IDistortion>(linkPset));
       }
+      for (size_t i = 0; i+1 < fLinks.size(); ++i) {
+        fLinks[i]->SetNextDistortion(fLinks[i+1].get());
+      }
     }
 
     geo::Point_t Distort(geo::Point_t const& point) const override
     {
-      for (auto const& link : fLinks) {
-        if (link->PointValidForDistort(point)) return link->Distort(point);
-      }
-      return point; // no link applies: identity
+      return (
+        fLinks.empty() ?
+        point :
+        fLinks.front()->Distort(point)
+      );
     }
 
     geo::Point_t Correct(geo::Point_t const& point) const override
     {
-      for (auto const& link : fLinks) {
-        if (link->PointValidForCorrect(point)) return link->Correct(point);
-      }
-      return point; // no link applies: identity
+      return (
+        fLinks.empty() ?
+        point :
+        fLinks.front()->Correct(point)
+      );
     }
 
   private:
